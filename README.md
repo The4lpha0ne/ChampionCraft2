@@ -63,55 +63,111 @@ ChampionCraft es una innovadora plataforma online dedicada a la creación y gest
    - **Acceso a Asesoramiento Experto:**
       - Consultas y consejos de expertos en League of Legends.
 
+---
+
 ### Base de Datos en PHP:
 
 ```sql
-CREATE TABLE Usuarios (
-    UsuarioID INT AUTO_INCREMENT PRIMARY KEY,
-    NombreUsuario VARCHAR(255),
-    Contrasena VARCHAR(255),
-    Correo VARCHAR(255),
-    TipoUsuario ENUM('Regular', 'Premium')
+-- phpMyAdmin SQL Dump
+-- version 5.2.1
+-- https://www.phpmyadmin.net/
+--
+-- Servidor: 127.0.0.1
+-- Tiempo de generación: 17-11-2023 a las 00:41:51
+-- Versión del servidor: 10.4.28-MariaDB
+-- Versión de PHP: 8.0.28
+
+SET SQL_MODE = "NO_AUTO_VALUE_ON_ZERO";
+START TRANSACTION;
+SET time_zone = "+00:00";
+
+
+/*!40101 SET @OLD_CHARACTER_SET_CLIENT=@@CHARACTER_SET_CLIENT */;
+/*!40101 SET @OLD_CHARACTER_SET_RESULTS=@@CHARACTER_SET_RESULTS */;
+/*!40101 SET @OLD_COLLATION_CONNECTION=@@COLLATION_CONNECTION */;
+/*!40101 SET NAMES utf8mb4 */;
+
+drop database  if exists proyecto_crud;
+create database proyecto_crud;
+use proyecto_crud;
+--
+-- Base de datos: `proyecto_crud`
+--
+
+-- --------------------------------------------------------
+
+--
+-- Estructura de tabla para la tabla `users`
+--
+
+CREATE TABLE `users` (
+  `id` int(11) NOT NULL,
+  `nombre` varchar
+
+(20) NOT NULL,
+  `rol` varchar(20) NOT NULL,
+  `procedencia` varchar(20) NOT NULL,
+  `recurso` varchar(20) NOT NULL,
+  `golpe` varchar(20) NOT NULL,
+  `imagen` varchar(500) NOT NULL
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci;
+
+CREATE TABLE usuarios (
+    id INT PRIMARY KEY AUTO_INCREMENT,
+    correo VARCHAR(255) NOT NULL,
+    contraseña VARCHAR(255) NOT NULL
 );
 
-CREATE TABLE Personajes (
-    PersonajeID INT AUTO_INCREMENT PRIMARY KEY,
-    UsuarioID INT,
-    Nombre VARCHAR(255),
-    Rol VARCHAR(255),
-    Procedencia VARCHAR(255),
-    Recurso VARCHAR(255),
-    TipoGolpe VARCHAR(255),
-    Imagen VARCHAR(255),
-    FOREIGN KEY (UsuarioID) REFERENCES Usuarios(UsuarioID)
-);
+--
+-- Volcado de datos para la tabla `users`
+--
 
-CREATE TABLE Suscripciones (
-    SuscripcionID INT AUTO_INCREMENT PRIMARY KEY,
-    UsuarioID INT,
-    FechaInicio DATE,
-    FechaFin DATE,
-    FOREIGN KEY (UsuarioID) REFERENCES Usuarios(UsuarioID)
-);
+INSERT INTO `users` (`id`, `nombre`, `rol`, `procedencia`, `recurso`, `golpe`, `imagen`) VALUES
+(118, 'Teemo', 'Top', 'Ciudad de Bandle', 'Mana', 'A distancia', '6eb5e4515e3740b0b6e14aca753c8083.jpg'),
+(119, 'Teemo', 'Top', 'Ciudad de Bandle', 'Mana', 'A distancia', '0e67e756fa1ecd3b5752fe89f4a61c03.jpg');
+
+--
+-- Índices para tablas volcadas
+--
+
+--
+-- Indices de la tabla `users`
+--
+ALTER TABLE `users`
+  ADD PRIMARY KEY (`id`);
+
+--
+-- AUTO_INCREMENT de las tablas volcadas
+--
+
+--
+-- AUTO_INCREMENT de la tabla `users`
+--
+ALTER TABLE `users`
+  MODIFY `id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=120;
+COMMIT;
+
+/*!40101 SET CHARACTER_SET_CLIENT=@OLD_CHARACTER_SET_CLIENT */;
+/*!40101 SET CHARACTER_SET_RESULTS=@OLD_CHARACTER_SET_RESULTS */;
+/*!40101 SET COLLATION_CONNECTION=@OLD_COLLATION_CONNECTION */;
 ```
+
+---
 
 ### Conexión a la Base de Datos con PHP:
 
 ```php
-<?php
-$nombreServidor = "ChampionCraftDB";
-$nombreUsuario = "UserCraft";
-$contrasena = "Craft1234";
-$nombreBaseDatos = "BD_ChampionCraft";
+<?php 
+function connection(){
+    $host = "localhost";
+    $user = "root";
+    $pass = "";
+    
+    $db = "proyecto_crud";
 
-// Crear conexión
-$conn = new mysqli($nombreServidor, $nombreUsuario, $contras
-
-ena, $nombreBaseDatos);
-
-// Verificar conexión
-if ($conn->connect_error) {
-    die("La conexión ha fallado: " . $conn->connect_error);
+    $connect = mysqli_connect($host, $user, $pass);	
+    mysqli_select_db($connect, $db);
+    return $connect;	
 }
 ?>
 ```
@@ -120,57 +176,63 @@ if ($conn->connect_error) {
 
 ### Entidades y Atributos
 
-1. **Usuario**
-   - **Atributos:** UsuarioID (clave primaria), NombreUsuario, Contraseña, Correo, TipoUsuario (Regular, Premium)
+1. **Usuario (Tabla `usuarios`)**
+   - **Atributos:**
+     - id (clave primaria)
+     - correo
+     - contraseña
 
-2. **Personaje**
-   - **Atributos:** PersonajeID (clave primaria), UsuarioID (clave foránea), Nombre, Rol, Procedencia, Recurso, TipoGolpe, Imagen
+2. **Personaje (Tabla `users`)**
+   - **Atributos:**
+     - id (clave primaria)
+     - nombre
+     - rol
+     - procedencia
+     - recurso
+     - golpe
+     - imagen
 
-3. **Suscripción**
-   - **Atributos:** SuscripcionID (clave primaria), UsuarioID (clave foránea), FechaInicio, FechaFin
+---
 
 ### Relaciones
 
-1. **Usuario - Personaje**
-   - Un usuario puede crear y gestionar varios personajes.
-   - Un personaje está asociado a un solo usuario.
-   - Relación: Uno a muchos (1:N)
+- Actualmente, no hay una relación explícita entre las entidades `Usuario` y `Personaje` en la base de datos.
 
-2. **Usuario - Suscripción**
-   - Un usuario puede tener una suscripción premium.
-   - Una suscripción está asociada a un solo usuario.
-   - Relación: Uno a uno (1:1) o uno a muchos (1:N), dependiendo de si permites múltiples suscripciones para un usuario.
+---
 
 ### Diagrama ER
 
-El diagrama entidad-relación se vería así:
+- El diagrama ER constaría de dos entidades principales (`Usuario` y `Personaje`) sin relaciones explícitas entre ellas.
 
-- **Usuario**
-  - UsuarioID (PK)
-  - NombreUsuario
-  - Contraseña
-  - Correo
-  - TipoUsuario
+---
 
-- **Personaje**
-  - PersonajeID (PK)
-  - UsuarioID (FK)
-  - Nombre
-  - Rol
-  - Procedencia
-  - Recurso
-  - TipoGolpe
-  - Imagen
+### Posibles Mejoras en el Futuro:
 
-- **Suscripción**
-  - SuscripcionID (PK)
-  - UsuarioID (FK)
-  - FechaInicio
-  - FechaFin
+En ChampionCraft estamos constantemente buscando formas de mejorar nuestra plataforma y ofrecer la mejor experiencia posible a nuestros usuarios. Hemos identificado algunas áreas clave en las que podríamos implementar mejoras en el futuro:
 
-Las líneas conectan el UsuarioID en la entidad **Usuario** con el UsuarioID en **Personaje** y **Suscripción**, mostrando las relaciones. En un software de diagramación, estas líneas se dibujarían con etiquetas para indicar el tipo de relación (1:N o 1:1).
+1. **Establecer Relaciones entre Usuarios y Personajes:**
+   - Una mejora significativa sería añadir un campo `usuario_id` en la tabla `users`. Esto permitiría establecer una relación directa entre un usuario y los personajes que crea. Con esta implementación, podríamos ofrecer una gestión de personajes más personalizada y eficiente, asegurando que cada usuario tenga un control exclusivo sobre sus creaciones.
+
+2. **Mejoras en la Interfaz de Usuario:**
+   - Planeamos mejorar nuestra interfaz de usuario para hacerla aún más interactiva y fácil de usar. Esto incluirá una navegación más intuitiva y una presentación visual más atractiva que se alinee aún más con el tema de League of Legends.
+
+3. **Funcionalidades Avanzadas para Usuarios Premium:**
+   - Queremos expandir las ventajas para nuestros usuarios premium, incluyendo características como la edición avanzada de personajes, acceso a elementos exclusivos y opciones de personalización más detalladas.
+
+4. **Optimización de la Base de Datos:**
+   - Estamos considerando optimizar nuestra base de datos para mejorar el rendimiento y la escalabilidad de la plataforma. Esto podría incluir la normalización de la base de datos y la implementación de índices para acelerar las consultas.
+
+5. **Integración con Redes Sociales:**
+   - Estamos explorando la posibilidad de integrar ChampionCraft con redes sociales, lo que permitiría a los usuarios compartir sus creaciones de personajes con amigos y en comunidades online.
+
+6. **Seguridad y Privacidad:**
+   - La seguridad y la privacidad de nuestros usuarios son de suma importancia. Planeamos fortalecer nuestras medidas de seguridad para proteger la información personal y las creaciones de los usuarios.
+
+Estamos comprometidos a hacer de ChampionCraft una plataforma líder en la creación y gestión de personajes de League of Legends, y estas mejoras serán pasos cruciales en nuestra evolución.
 
 ---
 
 ### Conclusión:
 ChampionCraft se presenta como una plataforma única y atractiva para los aficionados de League of Legends, ofreciendo una experiencia personalizada en la creación de personajes. Con una interfaz amigable y opciones tanto gratuitas como premium, ChampionCraft busca posicionarse como una herramienta esencial para los jugadores que buscan explorar y expandir su creatividad en el universo de League of Legends.
+
+---
